@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI拡張に有用なMCPサーバー厳選一覧 — Glama.ai / PulseMCP / mcp.so 横断調査</title>
+<style>
+:root{
+  --bg:#f5f6fa; --card:#ffffff; --ink:#1a2233; --muted:#5b6474; --line:#e4e7ef;
+  --accent:#4f46e5;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+a{color:var(--accent)}
+/* hero */
+.hero{background:linear-gradient(135deg,#312e81 0%,#4f46e5 55%,#6d28d9 100%);color:#fff;padding:46px 0 38px}
+.kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;margin:0}
+.hero h1{font-size:clamp(24px,4vw,34px);margin:8px 0 12px;font-weight:800;line-height:1.35}
+.lead{max-width:780px;opacity:.93;font-size:14.5px;margin:0 0 16px}
+.pill{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);padding:3px 13px;border-radius:999px;font-size:12.5px;margin:0 6px 6px 0}
+/* platforms */
+.platforms{padding:28px 0 4px}
+.platforms h2, .sec-title{font-size:19px;margin:0 0 12px;font-weight:750}
+.pf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.pf-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.pf-card h3{margin:0 0 2px;font-size:16px}
+.pf-card h3 a{text-decoration:none}
+.pf-url{font-size:11.5px;color:var(--muted);margin:0 0 8px;word-break:break-all}
+.pf-stat{font-size:12.5px;background:#f3f4fb;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:0 0 8px;color:#3b3f52}
+.pf-desc{font-size:13px;color:var(--muted);margin:0}
+.pf-note{font-size:11.5px;color:var(--muted);margin-top:10px}
+/* toolbar */
+.toolbar{position:sticky;top:0;z-index:30;background:rgba(245,246,250,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0;margin-top:20px}
+.toolbar-inner{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#q{flex:1 1 250px;min-width:200px;padding:8px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fff}
+#q:focus{outline:2px solid #c7cbf5;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:12.5px;color:var(--muted);user-select:none}
+.chip:hover{border-color:#c5c9d8}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.hitcount{font-size:12px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.legend{font-size:11.5px;color:var(--muted);margin:8px 0 0}
+/* category sections */
+section.cat{margin:28px 0}
+.cat-head{display:flex;align-items:baseline;gap:9px;margin-bottom:10px}
+.cat-head .dot{width:11px;height:11px;border-radius:3.5px;display:inline-block;flex:none;position:relative;top:1px}
+.cat-head h3{margin:0;font-size:18px;font-weight:750}
+.cat-head .cnt{color:var(--muted);font-size:12.5px}
+.tbl-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:auto;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+table{width:100%;border-collapse:collapse;min-width:840px}
+th{font-size:11.5px;color:var(--muted);text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);background:#fafbfe;font-weight:600;letter-spacing:.05em;white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.c-name{width:23%;min-width:185px}
+td.c-desc{width:44%}
+td.c-metric{width:15%;min-width:120px}
+td.c-links{width:18%;min-width:150px}
+.sname{font-weight:700;font-size:14px}
+.sauthor{color:var(--muted);font-size:12px;margin-top:1px}
+.badge{display:inline-block;font-size:10.5px;padding:1.5px 8px;border-radius:5px;margin-top:5px;font-weight:600;letter-spacing:.02em}
+.b-official{background:#e7f7ee;color:#0f7a3d;border:1px solid #bfe8cf}
+.b-ref{background:#e8f0fe;color:#1d4ed8;border:1px solid #c6d8fb}
+.b-comm{background:#f1f2f6;color:#5b6474;border:1px solid #e0e2ea}
+.metric{font-size:12px;color:var(--muted)}
+.plinks{display:flex;flex-wrap:wrap;gap:5px}
+.plink{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;text-decoration:none;border:1px solid;white-space:nowrap}
+.plink.g{color:#7c3aed;border-color:#ddd0fa;background:#f6f1fe}
+.plink.p{color:#0e7490;border-color:#c3e7ef;background:#effafc}
+.plink.s{color:#b45309;border-color:#f2ddb8;background:#fdf7ea}
+.plink:hover{filter:brightness(.95)}
+.nolink{font-size:11px;color:#b6bcc9}
+#empty{display:none;text-align:center;color:var(--muted);padding:50px 0;font-size:14px}
+/* footer */
+footer{margin:44px 0 34px;color:var(--muted);font-size:12.5px}
+.note-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.note-card p{margin:6px 0}
+.note-card b{color:#3b3f52}
+@media print{.toolbar{display:none}.hero{padding:24px 0}}
+@media (max-width:640px){td.c-name{min-width:160px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">MCP Server Directory Research</p>
+    <h1>AIの拡張に有用なMCPサーバー 厳選一覧</h1>
+    <p class="lead">MCPサーバー掲載の大手プラットフォーム3サイト(Glama.ai・PulseMCP・mcp.so)を巡回調査し、AIエージェントの機能拡張に役立つ主要サーバーを13分野に整理しました。各サーバー名の行から、掲載元プラットフォームの詳細ページへ移動できます。</p>
+    <div>
+      <span class="pill">調査日:2026年7月21日</span>
+      <span class="pill" id="totalPill">厳選 59サーバー</span>
+      <span class="pill">13カテゴリ</span>
+      <span class="pill">3プラットフォーム横断</span>
+    </div>
+  </div>
+</header>
+
+<section class="wrap platforms">
+  <h2>調査対象プラットフォーム</h2>
+  <div class="pf-grid">
+    <div class="pf-card">
+      <h3><a href="https://glama.ai" target="_blank" rel="noopener">Glama.ai</a></h3>
+      <p class="pf-url">https://glama.ai</p>
+      <p class="pf-stat">掲載規模:約<b>51,000件超</b>を索引/86カテゴリ(掲載値)</p>
+      <p class="pf-desc">Frank Fiegel氏が運営する大規模レジストリ。GitHubを継続クロールして索引化し、ツール定義の品質スコア(TDQS)やサンドボックスでの挙動・セキュリティスキャン、ブラウザ上で試せるMCP Inspector、Gateway・APIなど開発者向け機能が充実。</p>
+    </div>
+    <div class="pf-card">
+      <h3><a href="https://www.pulsemcp.com" target="_blank" rel="noopener">PulseMCP</a></h3>
+      <p class="pf-url">https://pulsemcp.com</p>
+      <p class="pf-stat">掲載規模:約<b>22,000件超</b>・毎日更新(掲載値)</p>
+      <p class="pf-desc">公式MCPレジストリのメンテナでもあるTadas Antanavicius氏らが運営。各サーバーに<b>週間推定利用数</b>が表示され人気比較がしやすいのが特長。ユースケース集や週刊ニュースレター、β版APIも提供。</p>
+    </div>
+    <div class="pf-card">
+      <h3><a href="https://mcp.so" target="_blank" rel="noopener">mcp.so</a></h3>
+      <p class="pf-url">https://mcp.so</p>
+      <p class="pf-stat">掲載規模:約<b>19,000件</b>(カテゴリ集計・16カテゴリ)</p>
+      <p class="pf-desc">開発者idoubi氏(chatmcp)が運営するコミュニティ主導ディレクトリで、サイト自体もオープンソース。Featured/Trending、GitHubスター順の「Top 100」ランキング、コミュニティ投稿による幅広い収録が特長。クライアントやSkills等の関連ディレクトリも併設。</p>
+    </div>
+  </div>
+  <p class="pf-note">※掲載規模は2026年7月21日時点の各サイト表示に基づきます(サイトごとに集計基準が異なります)。</p>
+</section>
+
+<div class="toolbar">
+  <div class="wrap">
+    <div class="toolbar-inner">
+      <input type="search" id="q" placeholder="サーバー名・提供元・キーワードで検索(例:検索、Slack、DB)">
+      <span class="hitcount" id="hit"></span>
+    </div>
+    <div class="chips" id="chips" style="margin-top:8px"></div>
+    <p class="legend">掲載ページ列:<span class="plink g">Glama</span> = Glama.ai/<span class="plink p">Pulse</span> = PulseMCP/<span class="plink s">mcp.so</span> = mcp.so。種別:<span class="badge b-official">公式</span>=提供元ベンダー公式、<span class="badge b-ref">リファレンス</span>=MCPプロジェクト公式実装、<span class="badge b-comm">OSS・コミュニティ</span>=サードパーティ製。</p>
+  </div>
+</div>
+
+<main class="wrap" id="list"></main>
+<div class="wrap"><p id="empty">該当するサーバーが見つかりませんでした。検索条件を変えてお試しください。</p></div>
+
+<footer class="wrap">
+  <div class="note-card">
+    <p><b>本一覧について</b></p>
+    <p>・2026年7月21日時点でGlama.ai、PulseMCP、mcp.so の3プラットフォームを巡回し、掲載内容を基に「AIの機能拡張に有用」と考えられる主要サーバーを選定したものです。</p>
+    <p>・「人気の目安」はPulseMCPの週間推定利用数(推定◯◯/週)、GitHubスター数(★)など<b>各サイトの掲載値</b>であり、集計基準が異なるため相対的な目安としてご覧ください。</p>
+    <p>・同名サービスでも公式版・コミュニティ版など複数の実装が存在する場合があります。リンク先は各プラットフォームで確認できた掲載ページです。</p>
+    <p>・<b>導入時の注意:</b>MCPサーバーはファイル・アカウント等への強い権限を持つ場合があります。提供元の信頼性、認証情報の扱い、権限スコープを確認のうえご利用ください。</p>
+    <p style="margin-top:10px">出典:<a href="https://glama.ai" target="_blank" rel="noopener">Glama.ai</a> / <a href="https://www.pulsemcp.com" target="_blank" rel="noopener">PulseMCP</a> / <a href="https://mcp.so" target="_blank" rel="noopener">mcp.so</a> 各掲載ページ(2026年7月21日巡回)</p>
+  </div>
+</footer>
+
+<script>
+const CATS = [
+  {id:"search-web",   name:"検索・Web情報収集",        color:"#2563eb"},
+  {id:"browser",      name:"ブラウザ操作・自動化",      color:"#0891b2"},
+  {id:"dev-code",     name:"開発・コード支援",          color:"#7c3aed"},
+  {id:"database",     name:"データベース",              color:"#059669"},
+  {id:"file-storage", name:"ファイル・ドキュメント",    color:"#d97706"},
+  {id:"communication",name:"コミュニケーション",        color:"#db2777"},
+  {id:"productivity", name:"生産性・プロジェクト管理",  color:"#ea580c"},
+  {id:"memory-rag",   name:"メモリ・ナレッジ・RAG",     color:"#9333ea"},
+  {id:"cloud-infra",  name:"クラウド・インフラ",        color:"#0284c7"},
+  {id:"automation",   name:"ワークフロー自動化",        color:"#4f46e5"},
+  {id:"design-media", name:"デザイン・メディア",        color:"#e11d48"},
+  {id:"business-finance", name:"ビジネス・決済・業務",  color:"#16a34a"},
+  {id:"thinking",     name:"推論・リサーチ強化",        color:"#64748b"}
+];
+const TYPES = {official:["公式","b-official"], ref:["リファレンス","b-ref"], comm:["OSS・コミュニティ","b-comm"]};
+/* n=名称 a=提供元 c=カテゴリ t=種別 d=概要 m=人気の目安 g/p/s=各プラットフォーム掲載URL */
+const DATA = [
+{n:"Fetch", a:"Anthropic(MCP公式)", c:"search-web", t:"ref", d:"指定URLのWebページを取得しMarkdownに変換。AIに基本的なWeb閲覧能力を追加する定番サーバー。", m:"推定 22万/週(Pulse)", g:"https://glama.ai/mcp/servers/modelcontextprotocol/fetch", p:"https://www.pulsemcp.com/servers/modelcontextprotocol-fetch", s:"https://mcp.so/servers/fetch"},
+{n:"Firecrawl", a:"Firecrawl(Mendable)", c:"search-web", t:"official", d:"JS描画対応のスクレイピング・クロールでサイト全体を抽出し、構造化データとしてAIに渡せる。", m:"推定 7.8万/週(Pulse)", g:"https://glama.ai/mcp/servers/@mendableai/firecrawl-mcp-server", p:"https://www.pulsemcp.com/servers/firecrawl", s:"https://mcp.so/servers/firecrawl"},
+{n:"Tavily", a:"Tavily", c:"search-web", t:"official", d:"AIエージェント向けに最適化されたWeb検索・本文抽出API。最新情報を回答に反映できる。", m:"推定 3.4万/週(Pulse)", g:"https://glama.ai/mcp/servers/@tavily-ai/tavily-mcp", p:"https://www.pulsemcp.com/servers/tavily-search", s:"https://mcp.so/servers/tavily-mcp"},
+{n:"Brave Search", a:"Brave/MCP公式", c:"search-web", t:"official", d:"Brave Search APIでWeb・画像・ニュース・ローカル検索を実行し、検索能力をAIに追加する。", m:"推定 2.5万/週(Pulse)", g:"https://glama.ai/mcp/servers/brave/brave-search-mcp-server", p:null, s:"https://mcp.so/servers/brave-search"},
+{n:"Exa", a:"Exa Labs", c:"search-web", t:"official", d:"AI向けセマンティック検索エンジン。Web検索や企業調査・コード検索など高精度な情報収集に対応。", m:"★4.7K(GitHub)", g:"https://glama.ai/mcp/servers/@exa-labs/exa-mcp-server", p:null, s:"https://mcp.so/servers/exa-mcp-server"},
+{n:"Bright Data", a:"Bright Data", c:"search-web", t:"official", d:"bot対策やブロックを回避しつつ、公開Webデータをリアルタイムに検索・抽出できるデータ収集基盤。", m:null, g:"https://glama.ai/mcp/servers/brightdata/brightdata-mcp", p:null, s:null},
+{n:"Playwright MCP", a:"Microsoft", c:"browser", t:"official", d:"アクセシビリティツリー経由でブラウザを操作。ページ閲覧・クリック・フォーム入力・テストを自動化できる。", m:"推定 510万/週(Pulse)", g:"https://glama.ai/mcp/servers/microsoft/playwright-mcp", p:"https://www.pulsemcp.com/servers/microsoft-playwright", s:"https://mcp.so/servers/playwright-mcp"},
+{n:"Chrome DevTools MCP", a:"Google", c:"browser", t:"official", d:"Chrome開発者ツールをAIから操作し、実ブラウザでのデバッグ・性能計測・コンソール解析を行える。", m:"推定 270万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/chrome-devtools", s:null},
+{n:"Puppeteer", a:"MCP公式(旧リファレンス)", c:"browser", t:"ref", d:"ヘッドレスChromeによるページ操作・スクリーンショット取得・JS実行などのブラウザ自動化。", m:"推定 3.3万/週(Pulse)", g:null, p:null, s:"https://mcp.so/servers/puppeteer"},
+{n:"GitHub MCP Server", a:"GitHub", c:"dev-code", t:"official", d:"リポジトリ・Issue・PRの読み書きやコード検索など、GitHub操作全般をAIから実行できる。", m:"★31.3K・推定 14.6万/週", g:"https://glama.ai/mcp/servers/modelcontextprotocol/github", p:"https://www.pulsemcp.com/servers/modelcontextprotocol-github", s:"https://mcp.so/servers/github-mcp-server"},
+{n:"Context7", a:"Upstash", c:"dev-code", t:"official", d:"主要ライブラリの最新公式ドキュメントとコード例をAIに供給し、コーディング時の幻覚を減らす。", m:"推定 93万/週(Pulse)", g:"https://glama.ai/mcp/servers/upstash/context7", p:"https://www.pulsemcp.com/servers/upstash-context7", s:"https://mcp.so/servers/context7-mcp"},
+{n:"Serena", a:"Oraios(OSS)", c:"dev-code", t:"comm", d:"LSPベースの意味的コード検索・シンボル単位編集をAIに与える、コーディングエージェント強化ツール。", m:"★26.2K・推定 2.7万/週", g:null, p:"https://www.pulsemcp.com/servers/oraios-serena", s:"https://mcp.so/servers/serena"},
+{n:"Sentry MCP", a:"Sentry", c:"dev-code", t:"official", d:"エラー・クラッシュ情報の照会から根本原因分析まで、アプリの障害調査をAIに任せられる。", m:null, g:"https://glama.ai/mcp/servers/@getsentry/sentry-mcp", p:"https://www.pulsemcp.com/servers/sentry-remote", s:"https://mcp.so/servers/sentry"},
+{n:"Desktop Commander", a:"wonderwhy-er(OSS)", c:"dev-code", t:"comm", d:"ターミナル実行・プロセス管理・ファイル差分編集など、ローカルPC操作を広くAIに開放する。", m:null, g:"https://glama.ai/mcp/servers/wonderwhy-er/DesktopCommanderMCP", p:null, s:"https://mcp.so/servers/desktopcommandermcp"},
+{n:"PostgreSQL", a:"Anthropic(MCP公式)", c:"database", t:"ref", d:"読み取り専用SQLの実行とスキーマ参照を提供し、DBの分析・調査をAIから安全に行える。", m:"推定 9万/週(Pulse)", g:"https://glama.ai/mcp/servers/@modelcontextprotocol/postgresql", p:"https://www.pulsemcp.com/servers/modelcontextprotocol-postgres", s:"https://mcp.so/servers/postgres"},
+{n:"Supabase", a:"Supabase", c:"database", t:"official", d:"プロジェクトのDB照会・スキーマ変更・設定管理をAIから実行し、アプリ開発を自動化できる。", m:"推定 12.7万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/supabase", s:null},
+{n:"MongoDB", a:"MongoDB", c:"database", t:"official", d:"MongoDB/Atlasに接続し、データ照会・集計・コレクション管理をAIから実行できる。", m:"推定 7.2万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/mongodb-js-mongodb", s:null},
+{n:"Snowflake", a:"Snowflake", c:"database", t:"official", d:"データウェアハウスへのSQL実行やCortex AI機能の利用をAIから行える。", m:"推定 4.8万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/snowflake", s:null},
+{n:"Redis", a:"Anthropic(MCP公式)", c:"database", t:"ref", d:"Redisのキー・バリュー操作をAIから実行し、インメモリデータの検索・管理ができる。", m:null, g:null, p:null, s:"https://mcp.so/servers/redis"},
+{n:"MCP Toolbox for Databases", a:"Google(googleapis)", c:"database", t:"official", d:"Postgres/BigQuery等、多数のDBに接続できるGoogle製OSS。SQL実行をAIから安全に行える。", m:"★15.9K(GitHub)", g:null, p:null, s:"https://mcp.so/servers/genai-toolbox"},
+{n:"dbt MCP", a:"dbt Labs", c:"database", t:"official", d:"dbtプロジェクトの実行・モデル参照・セマンティックレイヤー照会をAIから行える。", m:"推定 2.7万/週(Pulse)", g:"https://glama.ai/mcp/servers/dbt-labs/dbt-mcp", p:null, s:null},
+{n:"Filesystem", a:"Anthropic(MCP公式)", c:"file-storage", t:"ref", d:"許可したディレクトリ内のファイル読み書き・作成・移動・検索をAIに許可する定番サーバー。", m:"推定 24万/週(Pulse)", g:"https://glama.ai/mcp/servers/modelcontextprotocol/filesystem", p:"https://www.pulsemcp.com/servers/modelcontextprotocol-filesystem", s:"https://mcp.so/servers/filesystem"},
+{n:"Google Drive", a:"Anthropic(MCP公式)", c:"file-storage", t:"ref", d:"Driveのファイル検索・取得や、Googleドキュメント等の形式変換読み込みをAIから行える。", m:null, g:null, p:null, s:"https://mcp.so/servers/gdrive"},
+{n:"Office Word MCP", a:"GongRzhe(OSS)", c:"file-storage", t:"comm", d:"Word文書(.docx)の作成・編集・書式設定・表や画像の挿入をAIから直接実行できる。", m:"推定 31万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/office-word", s:null},
+{n:"Slack MCP", a:"Slack 公式ほか実装複数", c:"communication", t:"official", d:"チャンネル閲覧・検索・メッセージ送信をAIから行い、チーム連絡や情報収集を自動化できる。", m:"推定 4.6万/週(Pulse)", g:"https://glama.ai/mcp/servers/@korotovsky/slack-mcp-server", p:"https://www.pulsemcp.com/servers/slack", s:"https://mcp.so/servers/slack"},
+{n:"Gmail MCP", a:"Google 公式ほか実装複数", c:"communication", t:"official", d:"メールの検索・取得・下書き作成・ラベル管理をAIから実行(Google公式版/自動OAuth版など)。", m:null, g:"https://glama.ai/mcp/servers/@GongRzhe/Gmail-MCP-Server", p:"https://www.pulsemcp.com/servers/google-workspace-gmail", s:null},
+{n:"WhatsApp MCP", a:"lharries(OSS)", c:"communication", t:"comm", d:"個人のWhatsAppアカウントで、メッセージの検索・送信や連絡先管理をAIから行える。", m:"★5.9K(GitHub)", g:null, p:null, s:"https://mcp.so/servers/whatsapp-mcp"},
+{n:"Resend(メール送信)", a:"Resend", c:"communication", t:"official", d:"AIが文面作成からメール送信までを、Resend API経由でそのまま実行できる。", m:"★549(GitHub)", g:null, p:null, s:"https://mcp.so/servers/mcp-send-email-resend"},
+{n:"Notion MCP", a:"Notion", c:"productivity", t:"official", d:"ページ・データベースの検索・作成・更新などワークスペース操作で、ドキュメント作業を自動化。", m:"推定 9.3万/週(Pulse)", g:"https://glama.ai/mcp/servers/makenotion/notion-mcp-server", p:"https://www.pulsemcp.com/servers/notion", s:"https://mcp.so/servers/notion-mcp-server"},
+{n:"Atlassian(Jira/Confluence)", a:"Atlassian 公式ほか", c:"productivity", t:"official", d:"JiraチケットやConfluenceページの検索・作成・更新をAIから行える(公式リモート版あり)。", m:null, g:null, p:"https://www.pulsemcp.com/servers/atlassian", s:"https://mcp.so/servers/mcp-atlassian"},
+{n:"Asana", a:"Asana", c:"productivity", t:"official", d:"タスク・プロジェクトの検索・作成・更新をAIから行い、プロジェクト管理業務を支援できる。", m:"推定 3万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/asana", s:null},
+{n:"Todoist AI", a:"Doist", c:"productivity", t:"official", d:"Todoistのタスク・プロジェクトの参照・追加・整理をAIエージェントから行える。", m:null, g:"https://glama.ai/mcp/servers/Doist/todoist-ai", p:null, s:null},
+{n:"monday.com MCP", a:"monday.com", c:"productivity", t:"official", d:"ボード・アイテム・タスクなどmonday.com上のプロジェクト管理をAIから操作できる。", m:null, g:"https://glama.ai/mcp/servers/mondaycom/mcp", p:null, s:null},
+{n:"Google Workspace(統合)", a:"Taylor Wilsdon(OSS)", c:"productivity", t:"comm", d:"Gmail・カレンダー・Drive・ドキュメント等のGoogle Workspaceを、1つのサーバーで横断操作できる。", m:"推定 2.6万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/taylorwilsdon-google-workspace", s:null},
+{n:"esa MCP", a:"esa(日本製・公式)", c:"productivity", t:"official", d:"日本製情報共有ツールesa.ioの記事の閲覧・作成・更新・管理をAIから行える。", m:null, g:"https://glama.ai/mcp/servers/esaio/esa-mcp-server", p:null, s:null},
+{n:"Memory(Knowledge Graph)", a:"Anthropic(MCP公式)", c:"memory-rag", t:"ref", d:"ナレッジグラフ方式の永続メモリ。会話をまたいで事実や関係性をAIが記憶・想起できる。", m:"推定 6.6万/週(Pulse)", g:"https://glama.ai/mcp/servers/@modelcontextprotocol/knowledge-graph-memory-server", p:"https://www.pulsemcp.com/servers/modelcontextprotocol-memory", s:"https://mcp.so/servers/memory"},
+{n:"Chroma", a:"Chroma", c:"memory-rag", t:"official", d:"ベクトルDBへの埋め込み保存とセマンティック検索を提供し、RAGや長期記憶を実現する。", m:"推定 3.6万/週(Pulse)", g:"https://glama.ai/mcp/servers/chroma-core/chroma-mcp", p:"https://www.pulsemcp.com/servers/chroma", s:null},
+{n:"Obsidian MCP", a:"MarkusPfundstein ほか(OSS)", c:"memory-rag", t:"comm", d:"ObsidianのVault内ノートを検索・読み書きし、個人ナレッジベースを対話で活用できる。", m:"★4.1K(GitHub)", g:"https://glama.ai/mcp/servers/MarkusPfundstein/mcp-obsidian", p:null, s:"https://mcp.so/servers/obsidian-mcp"},
+{n:"AWS MCP Servers", a:"AWS(awslabs)", c:"cloud-infra", t:"official", d:"AWS公式のサーバー群。ドキュメント検索・CDK・コスト分析など多数のAWS操作をAIに提供。", m:"推定 15.5万/週(Docs、Pulse)", g:"https://glama.ai/mcp/servers/@awslabs/mcp", p:"https://www.pulsemcp.com/servers/aws-documentation", s:"https://mcp.so/servers/mcp"},
+{n:"Cloudflare", a:"Cloudflare", c:"cloud-infra", t:"official", d:"Workers・KV・R2・D1などCloudflareリソースの操作を自然言語で実行し、インフラ管理を自動化。", m:"推定 4.1万/週(Pulse)", g:"https://glama.ai/mcp/servers/cloudflare/mcp-server-cloudflare", p:"https://www.pulsemcp.com/servers/cloudflare-workers", s:"https://mcp.so/servers/cloudflare"},
+{n:"Kubernetes MCP", a:"containers(OSS)", c:"cloud-infra", t:"comm", d:"kubectl不要で、PodやDeployment等のKubernetes/OpenShiftリソースをAIから操作できる。", m:null, g:"https://glama.ai/mcp/servers/@containers/kubernetes-mcp-server", p:null, s:null},
+{n:"Grafana", a:"Grafana Labs", c:"cloud-infra", t:"official", d:"ダッシュボード検索・データソース照会・インシデント調査をAIから行える。", m:"推定 7.5万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/grafana", s:null},
+{n:"Vercel", a:"Vercel", c:"cloud-infra", t:"official", d:"プロジェクト・デプロイの管理やログ取得、ドキュメント検索をAIから実行できる。", m:"推定 2.5万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/vercel", s:null},
+{n:"Zapier", a:"Zapier", c:"automation", t:"official", d:"8,000以上のアプリと連携するZapierのアクションをAIから呼び出し、SaaS横断の作業を自動化。", m:"推定 11.7万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/zapier", s:null},
+{n:"n8n-MCP", a:"czlonkowski(OSS)", c:"automation", t:"comm", d:"n8nの全ノード仕様と検証機能をAIに与え、自動化ワークフローの設計・構築を高速化する。", m:"推定 11.8万/週(Pulse)", g:"https://glama.ai/mcp/servers/@czlonkowski/n8n-mcp", p:"https://www.pulsemcp.com/servers/czlonkowski-n8n", s:null},
+{n:"Make", a:"Make", c:"automation", t:"official", d:"Makeのシナリオ(ワークフロー)をAIから実行し、数千のアプリ連携を自動化に活用できる。", m:"推定 3万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/make", s:null},
+{n:"Apify", a:"Apify", c:"automation", t:"official", d:"3,000以上のActorを呼び出し、SNS・地図・ECなどのWebデータ抽出タスクを自動実行できる。", m:"★6.4K(GitHub)", g:"https://glama.ai/mcp/servers/apify/apify-mcp-server", p:null, s:null},
+{n:"Activepieces", a:"Activepieces(OSS)", c:"automation", t:"official", d:"オープンソース自動化基盤。数百のアプリ連携ピースをMCPツールとしてAIエージェントに提供。", m:"★23.2K(GitHub)", g:null, p:null, s:"https://mcp.so/servers/activepieces"},
+{n:"Figma(公式)", a:"Figma", c:"design-media", t:"official", d:"デザインのレイアウト・コンポーネント情報をAIに供給し、デザインからのコード生成を支援。", m:"推定 6.2万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/figma", s:null},
+{n:"Framelink Figma MCP", a:"GLips(OSS)", c:"design-media", t:"comm", d:"FigmaのデザインデータをCursor等のAIコーディングツールに渡し、デザイン実装を高精度化。", m:"★15.3K・推定 6.4万/週", g:null, p:null, s:"https://mcp.so/servers/figma-context-mcp"},
+{n:"Blender MCP", a:"ahujasid(OSS)", c:"design-media", t:"comm", d:"自然言語でBlenderを操作し、3Dモデリング・シーン構築・レンダリングを実行できる。", m:"★23.6K(GitHub)", g:"https://glama.ai/mcp/servers/ahujasid/blender-mcp", p:null, s:"https://mcp.so/servers/blender-mcp"},
+{n:"ComfyUI MCP", a:"artokun(OSS)", c:"design-media", t:"comm", d:"画像生成基盤ComfyUIのワークフローをAIから実行し、画像・メディア生成を自動化できる。", m:"推定 2.3万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/artokun-comfyui", s:null},
+{n:"Stripe", a:"Stripe", c:"business-finance", t:"official", d:"決済・顧客・請求書・返金などStripe APIの操作を、AIエージェントから実行できる。", m:"推定 7.9万/週(Pulse)", g:"https://glama.ai/mcp/servers/@stripe/agent-toolkit", p:"https://www.pulsemcp.com/servers/stripe-agent-toolkit", s:null},
+{n:"PayPal", a:"PayPal", c:"business-finance", t:"official", d:"決済・請求書作成・注文管理などのコマース機能を、AIエージェントから利用できる。", m:null, g:null, p:null, s:"https://mcp.so/server/paypal/paypal"},
+{n:"Shopify Storefront", a:"Shopify", c:"business-finance", t:"official", d:"ストアの商品カタログ検索やカート作成など、ストアフロント操作をAIから行える。", m:"推定 3.7万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/shopify-storefront", s:null},
+{n:"kintone MCP", a:"サイボウズ(公式)", c:"business-finance", t:"official", d:"kintoneのアプリ・レコード・設定の検索/作成/更新を自然言語で行える日本製業務基盤の公式サーバー。", m:"★588(GitHub)", g:"https://glama.ai/mcp/servers/kintone/mcp-server", p:null, s:null},
+{n:"EDGAR Tools", a:"dgunning(OSS)", c:"business-finance", t:"comm", d:"SEC EDGARの企業開示書類・財務データを検索・解析し、企業・投資リサーチを支援する。", m:"推定 19.1万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/gh-dgunning-edgar-tools", s:null},
+{n:"Sequential Thinking", a:"Anthropic(MCP公式)", c:"thinking", t:"ref", d:"問題を段階的な思考ステップに分解・修正しながら進め、AIの複雑な推論を強化する。", m:"推定 9.3万/週(Pulse)", g:null, p:"https://www.pulsemcp.com/servers/modelcontextprotocol-sequential-thinking", s:"https://mcp.so/servers/sequentialthinking"},
+{n:"GPT Researcher", a:"assafelovic(OSS)", c:"thinking", t:"comm", d:"Webや任意データを横断する自律リサーチエージェントが、出典付きの詳細レポートを生成する。", m:"★28.1K(GitHub)", g:null, p:null, s:"https://mcp.so/servers/gpt-researcher"}
+];
+
+const listEl = document.getElementById("list");
+const qEl = document.getElementById("q");
+const chipsEl = document.getElementById("chips");
+const hitEl = document.getElementById("hit");
+const emptyEl = document.getElementById("empty");
+let state = {q:"", cat:"all"};
+
+function chipHtml(){
+  let h = '<span class="chip'+(state.cat==="all"?" active":"")+'" data-cat="all">すべて</span>';
+  CATS.forEach(c=>{
+    const n = DATA.filter(d=>d.c===c.id).length;
+    if(!n) return;
+    h += '<span class="chip'+(state.cat===c.id?" active":"")+'" data-cat="'+c.id+'">'+c.name+" ("+n+")</span>";
+  });
+  chipsEl.innerHTML = h;
+}
+function linkCell(d){
+  let h = "";
+  if(d.g) h += '<a class="plink g" href="'+d.g+'" target="_blank" rel="noopener">Glama</a>';
+  if(d.p) h += '<a class="plink p" href="'+d.p+'" target="_blank" rel="noopener">Pulse</a>';
+  if(d.s) h += '<a class="plink s" href="'+d.s+'" target="_blank" rel="noopener">mcp.so</a>';
+  return h || '<span class="nolink">—</span>';
+}
+function rowHtml(d){
+  const t = TYPES[d.t] || TYPES.comm;
+  return '<tr><td class="c-name"><div class="sname">'+d.n+'</div><div class="sauthor">'+d.a+'</div><span class="badge '+t[1]+'">'+t[0]+'</span></td>'+
+    '<td class="c-desc">'+d.d+'</td>'+
+    '<td class="c-metric"><span class="metric">'+(d.m||"—")+'</span></td>'+
+    '<td class="c-links"><div class="plinks">'+linkCell(d)+'</div></td></tr>';
+}
+function render(){
+  const q = state.q.trim().toLowerCase();
+  const items = DATA.filter(d=>{
+    if(state.cat!=="all" && d.c!==state.cat) return false;
+    if(!q) return true;
+    return (d.n+" "+d.a+" "+d.d).toLowerCase().includes(q);
+  });
+  let h = "";
+  CATS.forEach(c=>{
+    const rows = items.filter(d=>d.c===c.id);
+    if(!rows.length) return;
+    h += '<section class="cat"><div class="cat-head"><span class="dot" style="background:'+c.color+'"></span><h3>'+c.name+'</h3><span class="cnt">'+rows.length+'件</span></div>'+
+      '<div class="tbl-wrap"><table><thead><tr><th>サーバー/提供元</th><th>できること(概要)</th><th>人気の目安</th><th>掲載ページ</th></tr></thead><tbody>'+
+      rows.map(rowHtml).join("")+'</tbody></table></div></section>';
+  });
+  listEl.innerHTML = h;
+  emptyEl.style.display = items.length ? "none" : "block";
+  hitEl.textContent = "表示中:" + items.length + " / " + DATA.length + "件";
+}
+qEl.addEventListener("input", e=>{ state.q = e.target.value; render(); });
+chipsEl.addEventListener("click", e=>{
+  const c = e.target.closest(".chip"); if(!c) return;
+  state.cat = c.dataset.cat; chipHtml(); render();
+});
+document.getElementById("totalPill").textContent = "厳選 " + DATA.length + "サーバー";
+chipHtml(); render();
+</script>
+</body>
+</html>
